@@ -34,7 +34,7 @@ blogRouter.post("/", async (request, response, next) => {
         author: body.author,
         url: body.url,
         thanks: body.thanks || 0,
-        user: user.id
+        user: user
     })
 
     const newBlog = await blog.save()

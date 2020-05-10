@@ -24,6 +24,7 @@ const Blog = (props) => {
                             Thanks
                         </button>
                     </p>
+                    <p> This blog was added by {user.name}. </p>
                     {(user.name !== blog.user.name)
                         ? null
                         : <p> <button onClick = {() => deleteBlog(blog.id)}>

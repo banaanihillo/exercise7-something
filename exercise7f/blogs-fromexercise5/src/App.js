@@ -1,21 +1,23 @@
 import React, {useState, useEffect} from "react"
 import Blog from "./components/Blog"
-import blogService from "./services/blogs"
+//import outdatedBlogService from "./services/blogs"
+import blogService from "./services/blogService"
 import loginService from "./services/login"
 import Message from "./components/Message"
 import LoginForm from "./components/LoginForm"
 import Togglable from "./components/Togglable"
 import BlogForm from "./components/BlogForm"
 import {showNotification} from "./reducers/notificationReducer"
-
-import {useDispatch} from "react-redux"
-
+import {initializeBlogs, addBlog} from "./reducers/blogReducer"
+import {useDispatch, useSelector} from "react-redux"
 require("./styles.css")
 
 const App = () => {
     const dispatch = useDispatch()
     //const happy = useSelector(state => state.happy)
-    const [blogs, setBlogs] = useState([])
+
+    const blogs = useSelector(state => state.blogs)
+    //const [blogs, setBlogs] = useState([])
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [user, setUser] = useState(null)
@@ -26,6 +28,11 @@ const App = () => {
     const referenceToBlogForm = React.createRef()
 
     useEffect(() => {
+        dispatch(initializeBlogs())
+    }, [dispatch])
+    
+    /*
+    useEffect(() => {
         blogService
             .getAll()
             .then(blogs =>
@@ -34,6 +41,7 @@ const App = () => {
                 )))
             )
     }, [])
+    */
 
     useEffect(() => {
         const currentlyLoggedIn = window.localStorage.getItem("currentlyLoggedIn")
@@ -79,7 +87,9 @@ const App = () => {
                 url: blogObject.url
             })
             .then(createdBlog => {
-                setBlogs(blogs.concat(createdBlog))
+                dispatch(addBlog(createdBlog))
+                const notification = `Added new blog: ${createdBlog.title}.`
+                dispatch(showNotification(notification))
             })
             .catch(error => {
                 console.log(error)
@@ -113,6 +123,7 @@ const App = () => {
         </Togglable>
     )
 
+    /*
     const addThanks = (id) => {
         const blogToFind = blogs.find(blogToUpdate => blogToUpdate.id === id)
         const blogToThank = {...blogToFind, thanks: (blogToFind.thanks + 1)}
@@ -129,12 +140,12 @@ const App = () => {
             })
             .catch(error => {
                 console.log(error)
-                /*
+
                 setErrorMessage("Something went wrong")
                 setTimeout(() => {
                     setErrorMessage(null)
                 }, 6000)
-                */
+
             })
     }
 
@@ -144,26 +155,27 @@ const App = () => {
                 .deleteBlog(id)
                 .then(() => {
                     setBlogs(blogs.filter(blog => blog.id !== id))
-                    /*
+
                     setMessage(
                         `Removed ${id} successfully.`
                     )
                     setTimeout(() => {
                         setMessage(null)
                     }, 6000)
-                    */
+
                 })
                 .catch(error => {
                     console.log(error)
-                    /*
+
                     setErrorMessage("Removal failed for some reason")
                     setTimeout(() => {
                         setErrorMessage(null)
                     }, 6000)
-                    */
+
                 })
         }
     }
+    */
 
     return (
         <div>
@@ -192,8 +204,8 @@ const App = () => {
                         <Blog
                             key = {blog.id}
                             blog = {blog}
-                            addThanks = {addThanks}
-                            deleteBlog = {deleteBlog}
+                            //addThanks = {addThanks}
+                            //deleteBlog = {deleteBlog}
                             user = {user}
                         />
                     )}
