@@ -20,14 +20,14 @@ const Blog = (props) => {
                     <p> {blog.url} </p>
                     <p>
                         Times thanked: <span className = "blogThanks"> {blog.thanks} </span>
-                        <button onClick = {() => addThanks(blog.id)}>
+                        <button onClick = {() => addThanks(blog)}>
                             Thanks
                         </button>
                     </p>
                     <p> This blog was added by {user.name}. </p>
                     {(user.name !== blog.user.name)
                         ? null
-                        : <p> <button onClick = {() => deleteBlog(blog.id)}>
+                        : <p> <button onClick = {() => deleteBlog(blog)}>
                             Remove this blog
                         </button> </p>
                     }

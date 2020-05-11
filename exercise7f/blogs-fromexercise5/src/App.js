@@ -8,7 +8,7 @@ import LoginForm from "./components/LoginForm"
 import Togglable from "./components/Togglable"
 import BlogForm from "./components/BlogForm"
 import {showNotification} from "./reducers/notificationReducer"
-import {initializeBlogs, addBlog} from "./reducers/blogReducer"
+import {initializeBlogs, addBlog, thankBlog, removeBlog} from "./reducers/blogReducer"
 import {useDispatch, useSelector} from "react-redux"
 require("./styles.css")
 
@@ -17,7 +17,7 @@ const App = () => {
     //const happy = useSelector(state => state.happy)
 
     const blogs = useSelector(state => state.blogs)
-    //const [blogs, setBlogs] = useState([])
+    
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [user, setUser] = useState(null)
@@ -30,18 +30,7 @@ const App = () => {
     useEffect(() => {
         dispatch(initializeBlogs())
     }, [dispatch])
-    
-    /*
-    useEffect(() => {
-        blogService
-            .getAll()
-            .then(blogs =>
-                setBlogs(blogs.reverse(blogs.sort((comparable1, comparable2) =>
-                    comparable1.thanks - comparable2.thanks
-                )))
-            )
-    }, [])
-    */
+
 
     useEffect(() => {
         const currentlyLoggedIn = window.localStorage.getItem("currentlyLoggedIn")
@@ -77,32 +66,18 @@ const App = () => {
         }
     }
 
-    const createBlog = (blogObject) => {
+    const createBlog = (blog) => {
         referenceToBlogForm.current.toggleVisibility()
-
-        blogService
-            .createBlog({
-                title: blogObject.title,
-                author: blogObject.author,
-                url: blogObject.url
-            })
-            .then(createdBlog => {
-                dispatch(addBlog(createdBlog))
-                const notification = `Added new blog: ${createdBlog.title}.`
-                dispatch(showNotification(notification))
-            })
-            .catch(error => {
-                console.log(error)
-                const notification = `Creation of a new blog failed: ${error}`
-                dispatch(showNotification(notification, 10000))
-            })
-        /*
-        setMessage(`Successfully added ${blogObject.title} by ${blogObject.author}.`)
-        console.log(message)
-        setTimeout(() => {
-            setMessage(null)
-        }, 6000)
-        */
+        
+        try {
+            dispatch(addBlog(blog))
+            const notification = `Added new blog: ${blog.title}.`
+            dispatch(showNotification(notification))
+        } catch (error) {
+            console.log(error)
+            const notification = `Creation of a new blog failed: ${error}`
+            dispatch(showNotification(notification, 10000))
+        }
     }
 
     const loginForm = () => (
@@ -123,59 +98,29 @@ const App = () => {
         </Togglable>
     )
 
-    /*
-    const addThanks = (id) => {
-        const blogToFind = blogs.find(blogToUpdate => blogToUpdate.id === id)
-        const blogToThank = {...blogToFind, thanks: (blogToFind.thanks + 1)}
-        blogService
-            .updateBlog(id, blogToThank)
-            .then(updatedBlog => {
-                setBlogs(blogs.map(blog =>
-                    (blog.id !== id)
-                        ? blog
-                        : updatedBlog
-                ))
-                const notification = `Added thanks for ${updatedBlog.title}.`
-                dispatch(showNotification(notification))
-            })
-            .catch(error => {
-                console.log(error)
-
-                setErrorMessage("Something went wrong")
-                setTimeout(() => {
-                    setErrorMessage(null)
-                }, 6000)
-
-            })
-    }
-
-    const deleteBlog = (id) => {
-        if (window.confirm(`Are you sure you want to remove ${id}?`)) {
-            blogService
-                .deleteBlog(id)
-                .then(() => {
-                    setBlogs(blogs.filter(blog => blog.id !== id))
-
-                    setMessage(
-                        `Removed ${id} successfully.`
-                    )
-                    setTimeout(() => {
-                        setMessage(null)
-                    }, 6000)
-
-                })
-                .catch(error => {
-                    console.log(error)
-
-                    setErrorMessage("Removal failed for some reason")
-                    setTimeout(() => {
-                        setErrorMessage(null)
-                    }, 6000)
-
-                })
+    const addThanks = (blog) => {
+        try {
+            dispatch(thankBlog(blog))
+            const notification = `Added thanks for ${blog.title}.`
+            dispatch(showNotification(notification))
+        } catch (error) {
+            console.log(error)
+            dispatch(showNotification(`Gratitude failure: ${error}`, 10000))
         }
     }
-    */
+
+    const deleteBlog = (blog) => {
+        if (window.confirm(`Are you sure you want to remove ${blog.title}?`)) {
+            try {
+                dispatch(removeBlog(blog))
+                dispatch(showNotification(`Removed ${blog.title} successfully.`))
+            } catch (error) {
+                console.log(error)
+                dispatch(showNotification(`Unsuccessful removal: ${error}`))
+            }
+        }
+    }
+    
 
     return (
         <div>
@@ -204,8 +149,8 @@ const App = () => {
                         <Blog
                             key = {blog.id}
                             blog = {blog}
-                            //addThanks = {addThanks}
-                            //deleteBlog = {deleteBlog}
+                            addThanks = {addThanks}
+                            deleteBlog = {deleteBlog}
                             user = {user}
                         />
                     )}

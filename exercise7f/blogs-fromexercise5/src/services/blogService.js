@@ -28,8 +28,27 @@ const createBlog = async (blogObject) => {
     return response.data
 }
 
+const thankBlog = async (blog) => {
+    const thankedBlog = {...blog, thanks: (blog.thanks + 1)}
+    const response = await axios.put(`${address}/${blog.id}`, thankedBlog)
+    return response.data
+}
+
+const deleteBlog = async (blog) => {
+    const config = {
+        headers: {
+            Authorization: token
+        }
+    }
+
+    const response = await axios.delete(`${address}/${blog.id}`, config)
+    return response.data
+}
+
 export default {
     getBlogs,
     createBlog,
-    setToken
+    setToken,
+    thankBlog,
+    deleteBlog
 }
