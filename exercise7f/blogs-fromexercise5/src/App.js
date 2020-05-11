@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react"
 import Blog from "./components/Blog"
 //import outdatedBlogService from "./services/blogs"
-import blogService from "./services/blogService"
+//import blogService from "./services/blogService"
 import loginService from "./services/login"
 import Message from "./components/Message"
 import LoginForm from "./components/LoginForm"
@@ -9,6 +9,7 @@ import Togglable from "./components/Togglable"
 import BlogForm from "./components/BlogForm"
 import {showNotification} from "./reducers/notificationReducer"
 import {initializeBlogs, addBlog, thankBlog, removeBlog} from "./reducers/blogReducer"
+import {setUser} from "./reducers/userReducer"
 import {useDispatch, useSelector} from "react-redux"
 require("./styles.css")
 
@@ -20,7 +21,8 @@ const App = () => {
     
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
-    const [user, setUser] = useState(null)
+    //const [user, setUser] = useState(null)
+    const user = useSelector(state => state.user)
     /*
     const [message, setMessage] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -35,24 +37,20 @@ const App = () => {
     useEffect(() => {
         const currentlyLoggedIn = window.localStorage.getItem("currentlyLoggedIn")
         if (currentlyLoggedIn) {
-            const user = JSON.parse(currentlyLoggedIn)
-            setUser(user)
-            blogService.setToken(user.token)
+            dispatch(setUser(JSON.parse(currentlyLoggedIn)))
         }
-    }, [])
+    }, [dispatch])
 
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
-            const user = await loginService.login({
+            const loggedIn = await loginService.login({
                 userName, password
             })
             window.localStorage.setItem(
-                "currentlyLoggedIn", JSON.stringify(user)
+                "currentlyLoggedIn", JSON.stringify(loggedIn)
             )
-            blogService.setToken(user.token)
-
-            setUser(user)
+            dispatch(setUser(loggedIn))
             setUserName("")
             setPassword("")
         } catch (error) {
@@ -132,7 +130,7 @@ const App = () => {
                     <p> Logged in as {user.userName}
                         <button onClick = {() => {
                             window.localStorage.removeItem("currentlyLoggedIn")
-                            setUser(null)
+                            dispatch(setUser(null))
                             /*
                             setMessage("Logged out successfully.")
                             setTimeout(() => {
