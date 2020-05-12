@@ -1,34 +1,32 @@
-//import loginService from "../services/login"
-import blogService from "../services/blogService"
+import userService from "../services/userService"
 
-const userReducer = (state = null, action) => {
+const userReducer = (state = [], action) => {
     switch (action.type) {
-        case "LOG_IN":
-            return action.data
-        case "SET_USER":
-            return action.data
+        case "INITIALIZE_USERS":
+            return action.users
+        case "CREATE_USER":
+            return [...state, action.data]
         default:
             return state
     }
 }
-/*
-export const login = (credentials) => {
+
+export const initializeUsers = () => {
     return async dispatch => {
-        const loggedIn = await loginService.login(credentials)
-        await blogService.setToken(loggedIn.token)
+        const users = await userService.getUsers()
         dispatch({
-            type: "LOG_IN",
-            data: loggedIn
+            type: "INITIALIZE_USERS",
+            users: users
         })
     }
 }
-*/
-export const setUser = (user) => {
+
+export const addUser = (newUser) => {
     return async dispatch => {
-        await blogService.setToken(user.token)
+        const createdUser = await userService.createUser(newUser)
         dispatch({
-            type: "SET_USER",
-            data: user
+            type: "CREATE_USER",
+            data: createdUser
         })
     }
 }

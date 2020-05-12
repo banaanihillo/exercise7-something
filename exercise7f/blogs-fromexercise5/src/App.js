@@ -9,20 +9,29 @@ import Togglable from "./components/Togglable"
 import BlogForm from "./components/BlogForm"
 import {showNotification} from "./reducers/notificationReducer"
 import {initializeBlogs, addBlog, thankBlog, removeBlog} from "./reducers/blogReducer"
-import {setUser} from "./reducers/userReducer"
+import {addUser, initializeUsers} from "./reducers/userReducer"
 import {useDispatch, useSelector} from "react-redux"
+import UserForm from "./components/UserForm"
+import {setLoggedIn} from "./reducers/loginReducer"
 require("./styles.css")
 
 const App = () => {
     const dispatch = useDispatch()
     //const happy = useSelector(state => state.happy)
 
-    const blogs = useSelector(state => state.blogs)
+    const blogs = useSelector(state => {
+        return state.blogs.reverse(
+            state.blogs.sort((comparable, comparator) =>
+                (comparable.thanks - comparator.thanks)
+            )
+        )
+    })
     
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     //const [user, setUser] = useState(null)
-    const user = useSelector(state => state.user)
+    const users = useSelector(state => state.users)
+    const loggedInUser = useSelector(state => state.loggedIn)
     /*
     const [message, setMessage] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -33,11 +42,15 @@ const App = () => {
         dispatch(initializeBlogs())
     }, [dispatch])
 
+    useEffect(() => {
+        dispatch(initializeUsers())
+    }, [dispatch])
+
 
     useEffect(() => {
         const currentlyLoggedIn = window.localStorage.getItem("currentlyLoggedIn")
         if (currentlyLoggedIn) {
-            dispatch(setUser(JSON.parse(currentlyLoggedIn)))
+            dispatch(setLoggedIn(JSON.parse(currentlyLoggedIn)))
         }
     }, [dispatch])
 
@@ -50,7 +63,7 @@ const App = () => {
             window.localStorage.setItem(
                 "currentlyLoggedIn", JSON.stringify(loggedIn)
             )
-            dispatch(setUser(loggedIn))
+            dispatch(setLoggedIn(loggedIn))
             setUserName("")
             setPassword("")
         } catch (error) {
@@ -96,6 +109,17 @@ const App = () => {
         </Togglable>
     )
 
+    const createUser = (user) => {
+        dispatch(addUser(user))
+        dispatch(showNotification(`Added a new user: ${user.userName}.`))
+    }
+
+    const userForm = () => (
+        <Togglable buttonLabel = "Add a new user">
+            <UserForm createUser = {createUser} />
+        </Togglable>
+    )
+
     const addThanks = (blog) => {
         try {
             dispatch(thankBlog(blog))
@@ -124,13 +148,13 @@ const App = () => {
         <div>
             <h1> Blog application </h1>
             <Message />
-            {(user === null)
+            {(loggedInUser === null)
                 ? loginForm()
                 : <div>
-                    <p> Logged in as {user.userName}
+                    <p> Logged in as {loggedInUser.userName}
                         <button onClick = {() => {
                             window.localStorage.removeItem("currentlyLoggedIn")
-                            dispatch(setUser(null))
+                            dispatch(setLoggedIn(null))
                             /*
                             setMessage("Logged out successfully.")
                             setTimeout(() => {
@@ -142,16 +166,39 @@ const App = () => {
                         </button>
                     </p>
                     {blogForm()}
-                    <h3> List of blogs </h3>
+                    <h2> List of blogs </h2>
                     {blogs.map(blog =>
                         <Blog
                             key = {blog.id}
                             blog = {blog}
                             addThanks = {addThanks}
                             deleteBlog = {deleteBlog}
-                            user = {user}
+                            user = {loggedInUser}
                         />
                     )}
+                    <h3> Users </h3>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    User name
+                                </th>
+                                <th>
+                                    Number of blogs
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {users.map(user =>
+                            <tr key = {user.id} style = {{textAlign: "center"}}>
+                                <td> {user.userName} </td>
+                                <td> {user.blogs.length} </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                    {userForm()}
                 </div>
             }
         </div>

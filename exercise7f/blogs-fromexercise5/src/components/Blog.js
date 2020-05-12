@@ -24,8 +24,8 @@ const Blog = (props) => {
                             Thanks
                         </button>
                     </p>
-                    <p> This blog was added by {user.name}. </p>
-                    {(user.name !== blog.user.name)
+                    <p> This blog was added by {blog.user.name}. </p>
+                    {(user.userName !== blog.user.userName)
                         ? null
                         : <p> <button onClick = {() => deleteBlog(blog)}>
                             Remove this blog
