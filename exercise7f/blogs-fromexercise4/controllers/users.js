@@ -21,14 +21,23 @@ userRouter.post("/", async (request, response) => {
     response.json(newUser.toJSON())
 })
 
-userRouter.get("/", async (request, response) => {
+userRouter.get("/", async (_request, response) => {
     const users = await User
         .find({})
         .populate("blogs", {title: 1, author: 1, url: 1, id: 1})
-    console.log(request.originalUrl)
+
     response.json(users.map(user => {
         return user.toJSON()
     }))
 })
 
+userRouter.get("/:id", async (request, response) => {
+    const user = await User
+        .findById(request.params.id)
+        .populate("blogs", {title: 1, author: 1, url: 1, id: 1})
+    
+    return response.json(user.toJSON())
+})
+
 module.exports = userRouter
+

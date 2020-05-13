@@ -16,7 +16,13 @@ const createUser = async (newUser) => {
     return response.data
 }
 
+const getUser = async (id) => {
+    const response = await axios.get(address, id)
+    return response.data
+}
+
 export default {
     getUsers,
-    createUser
+    createUser,
+    getUser
 }

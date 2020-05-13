@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import Blog from "./components/Blog"
-//import outdatedBlogService from "./services/blogs"
-//import blogService from "./services/blogService"
+import User from "./components/User"
 import loginService from "./services/login"
 import Message from "./components/Message"
 import LoginForm from "./components/LoginForm"
@@ -13,6 +12,7 @@ import {addUser, initializeUsers} from "./reducers/userReducer"
 import {useDispatch, useSelector} from "react-redux"
 import UserForm from "./components/UserForm"
 import {setLoggedIn} from "./reducers/loginReducer"
+import {Switch, Route, Link, useRouteMatch} from "react-router-dom"
 require("./styles.css")
 
 const App = () => {
@@ -142,7 +142,11 @@ const App = () => {
             }
         }
     }
-    
+
+    const match = useRouteMatch("/users/:id")
+    const individualUser = (match)
+        ? users.find(user => user.id === match.params.id)
+        : null
 
     return (
         <div>
@@ -155,12 +159,7 @@ const App = () => {
                         <button onClick = {() => {
                             window.localStorage.removeItem("currentlyLoggedIn")
                             dispatch(setLoggedIn(null))
-                            /*
-                            setMessage("Logged out successfully.")
-                            setTimeout(() => {
-                                setMessage(null)
-                            }, 3000)
-                            */
+                            dispatch(showNotification("Logged out successfully."))
                         }}>
                             Log out
                         </button>
@@ -176,29 +175,44 @@ const App = () => {
                             user = {loggedInUser}
                         />
                     )}
-                    <h3> Users </h3>
-                    
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>
-                                    User name
-                                </th>
-                                <th>
-                                    Number of blogs
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {users.map(user =>
-                            <tr key = {user.id} style = {{textAlign: "center"}}>
-                                <td> {user.userName} </td>
-                                <td> {user.blogs.length} </td>
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
-                    {userForm()}
+                    <h2> Users </h2>
+                    <Switch>
+                        <Route path = "/users/:id">
+                            <User user = {individualUser} />
+                            <br />
+                            <Link to = "/"> Go back to home page </Link>
+                        </Route>
+                        <Route path = "/">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            User name
+                                        </th>
+                                        <th>
+                                            Number of blogs
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map(user =>
+                                        <tr
+                                            key = {user.id}
+                                            style = {{textAlign: "center"}}
+                                        >
+                                            <td>
+                                                <Link to = {`/users/${user.id}`}>
+                                                    {user.userName}
+                                                </Link>
+                                            </td>
+                                            <td> {user.blogs.length} </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                            {userForm()}
+                        </Route>
+                    </Switch>
                 </div>
             }
         </div>
