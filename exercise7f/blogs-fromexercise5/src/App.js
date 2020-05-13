@@ -143,9 +143,14 @@ const App = () => {
         }
     }
 
-    const match = useRouteMatch("/users/:id")
-    const individualUser = (match)
-        ? users.find(user => user.id === match.params.id)
+    const userMatch = useRouteMatch("/users/:id")
+    const individualUser = (userMatch)
+        ? users.find(user => user.id === userMatch.params.id)
+        : null
+    
+    const blogMatch = useRouteMatch("/blogs/:id")
+    const individualBlog = (blogMatch)
+        ? blogs.find(blog => blog.id === blogMatch.params.id)
         : null
 
     return (
@@ -166,15 +171,27 @@ const App = () => {
                     </p>
                     {blogForm()}
                     <h2> List of blogs </h2>
-                    {blogs.map(blog =>
-                        <Blog
-                            key = {blog.id}
-                            blog = {blog}
-                            addThanks = {addThanks}
-                            deleteBlog = {deleteBlog}
-                            user = {loggedInUser}
-                        />
-                    )}
+                    <Switch>
+                        <Route path = "/blogs/:id">
+                            <Blog
+                                blog = {individualBlog}
+                                addThanks = {addThanks}
+                                deleteBlog = {deleteBlog}
+                                user = {loggedInUser}
+                            />
+                            <br />
+                            <Link to = "/"> Go back to blog list </Link>
+                        </Route>
+                        <Route path = "/">
+                            {blogs.map(blog =>
+                                <li key = {blog.id}>
+                                    <Link to = {`/blogs/${blog.id}`}>
+                                        {blog.title}
+                                    </Link>
+                                </li>
+                            )}
+                        </Route>
+                    </Switch>
                     <h2> Users </h2>
                     <Switch>
                         <Route path = "/users/:id">
