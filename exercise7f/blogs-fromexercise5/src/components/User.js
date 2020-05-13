@@ -12,8 +12,8 @@ const User = (props) => {
     }
     return (
         <div>
-            <h3> {user.userName} </h3>
-            <h4> This user has added the following blogs: </h4>
+            <h2> {user.userName} </h2>
+            <h3> This user has added the following blogs: </h3>
             {user.blogs.map(blog =>
                 <li key = {blog.id}>
                     {blog.title}

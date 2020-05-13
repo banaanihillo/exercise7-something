@@ -13,6 +13,8 @@ import {useDispatch, useSelector} from "react-redux"
 import UserForm from "./components/UserForm"
 import {setLoggedIn} from "./reducers/loginReducer"
 import {Switch, Route, Link, useRouteMatch} from "react-router-dom"
+import Blogs from "./components/Blogs"
+import Users from "./components/Users"
 require("./styles.css")
 
 const App = () => {
@@ -155,22 +157,16 @@ const App = () => {
 
     return (
         <div>
-            <h1> Blog application </h1>
-            <Message />
+            
             {(loggedInUser === null)
                 ? loginForm()
                 : <div>
-                    <p> Logged in as {loggedInUser.userName}
-                        <button onClick = {() => {
-                            window.localStorage.removeItem("currentlyLoggedIn")
-                            dispatch(setLoggedIn(null))
-                            dispatch(showNotification("Logged out successfully."))
-                        }}>
-                            Log out
-                        </button>
-                    </p>
-                    {blogForm()}
-                    <h2> List of blogs </h2>
+                    <Link to = "/"> Main page </Link>
+                    <Link to = "/blogs"> Blogs </Link>
+                    <Link to = "/users"> Users </Link>
+                    <br />
+                    <h1> Blog application </h1>
+                    <Message />
                     <Switch>
                         <Route path = "/blogs/:id">
                             <Blog
@@ -180,54 +176,30 @@ const App = () => {
                                 user = {loggedInUser}
                             />
                             <br />
-                            <Link to = "/"> Go back to blog list </Link>
+                            <Link to = "/blogs"> Back to list of blogs </Link>
                         </Route>
-                        <Route path = "/">
-                            {blogs.map(blog =>
-                                <li key = {blog.id}>
-                                    <Link to = {`/blogs/${blog.id}`}>
-                                        {blog.title}
-                                    </Link>
-                                </li>
-                            )}
+                        <Route path = "/blogs">
+                            <Blogs blogs = {blogs} blogForm = {blogForm} />
                         </Route>
-                    </Switch>
-                    <h2> Users </h2>
-                    <Switch>
+
                         <Route path = "/users/:id">
                             <User user = {individualUser} />
                             <br />
-                            <Link to = "/"> Go back to home page </Link>
+                            <Link to = "/users"> Back to list of users </Link>
+                        </Route>
+                        <Route path = "/users">
+                            <Users users = {users} userForm = {userForm} />
                         </Route>
                         <Route path = "/">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            User name
-                                        </th>
-                                        <th>
-                                            Number of blogs
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users.map(user =>
-                                        <tr
-                                            key = {user.id}
-                                            style = {{textAlign: "center"}}
-                                        >
-                                            <td>
-                                                <Link to = {`/users/${user.id}`}>
-                                                    {user.userName}
-                                                </Link>
-                                            </td>
-                                            <td> {user.blogs.length} </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                            {userForm()}
+                            <p> Logged in as {loggedInUser.userName}
+                                <button onClick = {() => {
+                                    window.localStorage.removeItem("currentlyLoggedIn")
+                                    dispatch(setLoggedIn(null))
+                                    dispatch(showNotification("Logged out successfully."))
+                                }}>
+                                    Log out
+                                </button>
+                            </p>
                         </Route>
                     </Switch>
                 </div>
