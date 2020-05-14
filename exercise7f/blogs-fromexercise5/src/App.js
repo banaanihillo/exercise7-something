@@ -7,7 +7,9 @@ import LoginForm from "./components/LoginForm"
 import Togglable from "./components/Togglable"
 import BlogForm from "./components/BlogForm"
 import {showNotification} from "./reducers/notificationReducer"
-import {initializeBlogs, addBlog, thankBlog, removeBlog} from "./reducers/blogReducer"
+import {
+    initializeBlogs, addBlog, thankBlog, removeBlog, commentBlog
+} from "./reducers/blogReducer"
 import {addUser, initializeUsers} from "./reducers/userReducer"
 import {useDispatch, useSelector} from "react-redux"
 import UserForm from "./components/UserForm"
@@ -145,6 +147,11 @@ const App = () => {
         }
     }
 
+    const addComment = (blog, comment) => {
+        dispatch(commentBlog(blog, comment))
+        dispatch(showNotification(`Added comment "${comment}" to ${blog.title}.`))
+    }
+
     const userMatch = useRouteMatch("/users/:id")
     const individualUser = (userMatch)
         ? users.find(user => user.id === userMatch.params.id)
@@ -174,6 +181,7 @@ const App = () => {
                                 addThanks = {addThanks}
                                 deleteBlog = {deleteBlog}
                                 user = {loggedInUser}
+                                addComment = {addComment}
                             />
                             <br />
                             <Link to = "/blogs"> Back to list of blogs </Link>

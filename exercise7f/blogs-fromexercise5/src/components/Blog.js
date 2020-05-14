@@ -1,6 +1,9 @@
 import React from "react"
+import {useField} from "../hooks/fieldHook"
+
 const Blog = (props) => {
-    const {blog, addThanks, deleteBlog, user} = props
+    const {blog, addThanks, deleteBlog, user, addComment} = props
+    const commentInput = useField("comment")
     if (!blog) {
         return (
             <div>
@@ -8,6 +11,11 @@ const Blog = (props) => {
                 Clicking on the link below will take you back to the main page.
             </div>
         )
+    }
+
+    const createComment = (event) => {
+        event.preventDefault()
+        addComment(blog, commentInput.value)
     }
 
     return (
@@ -22,6 +30,21 @@ const Blog = (props) => {
                         Thanks
                     </button>
                 </p>
+                <h3> Comments </h3>
+                <p>
+                    {blog.comments.map(comment =>
+                        <li key = {Math.random() * 100000}>
+                            {comment}
+                        </li>
+                    )}
+                </p>
+                <form onSubmit = {createComment}>
+                    <input {...commentInput} />
+                    <br />
+                    <button type = "submit">
+                        Add comment
+                    </button>
+                </form>
                 <p> This blog was added by {blog.user.name}. </p>
                 {(user.userName !== blog.user.userName)
                     ? null

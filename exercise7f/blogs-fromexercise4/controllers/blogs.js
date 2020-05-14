@@ -34,6 +34,7 @@ blogRouter.post("/", async (request, response, next) => {
         author: body.author,
         url: body.url,
         thanks: body.thanks || 0,
+        comments: body.comments,
         user: user
     })
 
@@ -64,6 +65,7 @@ blogRouter.put("/:id", async (request, response) => {
         author: body.author || originalValues.author,
         url: body.url || originalValues.url,
         thanks: body.thanks || originalValues.thanks,
+        comments: body.comments || originalValues.comments,
         user: originalValues.user
     }
     const modifiedBlog = await Blog.findByIdAndUpdate(

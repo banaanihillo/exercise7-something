@@ -22,6 +22,7 @@ const createBlog = async (blogObject) => {
         author: blogObject.author,
         url: blogObject.url,
         thanks: 0,
+        comments: [],
         id: Math.ceil(Math.random() * 1000000000)
     }
     const response = await axios.post(address, createdBlog, config)
@@ -45,10 +46,17 @@ const deleteBlog = async (blog) => {
     return response.data
 }
 
+const commentBlog = async (blog, comment) => {
+    const commentedBlog = {...blog, comments: blog.comments.concat(comment)}
+    const response = await axios.put(`${address}/${blog.id}`, commentedBlog)
+    return response.data
+}
+
 export default {
     getBlogs,
     createBlog,
     setToken,
     thankBlog,
-    deleteBlog
+    deleteBlog,
+    commentBlog
 }
