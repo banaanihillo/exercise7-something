@@ -1,1 +1,1 @@
-whoops, some outdated information here
+Exercise 7-17 apparently includes 7-18 as well
