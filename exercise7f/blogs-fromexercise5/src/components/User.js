@@ -1,4 +1,9 @@
 import React from "react"
+import styledComponents from "styled-components"
+
+const UserHeader = styledComponents.h2`
+    color: deeppink
+`
 
 const User = (props) => {
     const {user} = props
@@ -12,7 +17,7 @@ const User = (props) => {
     }
     return (
         <div>
-            <h2> {user.userName} </h2>
+            <UserHeader> {user.userName} </UserHeader>
             <h3> This user has added the following blogs: </h3>
             {user.blogs.map(blog =>
                 <li key = {blog.id}>

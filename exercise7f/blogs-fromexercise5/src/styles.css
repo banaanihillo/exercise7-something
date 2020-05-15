@@ -15,3 +15,11 @@ input, button {
     margin-bottom: 10px;
     font-size: 30px
 }
+
+li:nth-child(odd) {
+    background-color: lightgray
+}
+
+li:nth-child(even) {
+    background-color: lightpink
+}

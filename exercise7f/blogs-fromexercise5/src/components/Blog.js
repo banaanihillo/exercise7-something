@@ -1,5 +1,19 @@
 import React from "react"
 import {useField} from "../hooks/fieldHook"
+import styledComponents from "styled-components"
+
+const StyledBlogDisplay = styledComponents.div`
+    background-color: plum
+`
+
+const CommentButton = styledComponents.button`
+    color: lightpink;
+    background-color: darkmagenta
+`
+
+const CuteComment = styledComponents.li`
+    color: darkmagenta
+`
 
 const Blog = (props) => {
     const {blog, addThanks, deleteBlog, user, addComment} = props
@@ -19,7 +33,7 @@ const Blog = (props) => {
     }
 
     return (
-        <div className = "blogDisplay">
+        <StyledBlogDisplay className = "blogDisplay">
             <div>
                 <h2> {blog.title} </h2>
                 <p> by {blog.author} </p>
@@ -33,17 +47,17 @@ const Blog = (props) => {
                 <h3> Comments </h3>
                 <p>
                     {blog.comments.map(comment =>
-                        <li key = {Math.random() * 100000}>
+                        <CuteComment key = {Math.random() * 100000}>
                             {comment}
-                        </li>
+                        </CuteComment>
                     )}
                 </p>
                 <form onSubmit = {createComment}>
                     <input {...commentInput} />
                     <br />
-                    <button type = "submit">
+                    <CommentButton type = "submit">
                         Add comment
-                    </button>
+                    </CommentButton>
                 </form>
                 <p> This blog was added by {blog.user.name}. </p>
                 {(user.userName !== blog.user.userName)
@@ -54,7 +68,7 @@ const Blog = (props) => {
                 }
             </div>
 
-        </div>
+        </StyledBlogDisplay>
     )
     
 }

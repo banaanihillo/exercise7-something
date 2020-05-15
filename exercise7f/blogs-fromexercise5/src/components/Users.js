@@ -1,10 +1,15 @@
 import React from "react"
 import {Link} from "react-router-dom"
+import styledComponents from "styled-components"
+
+const CheerfulContainer = styledComponents.div`
+    background-color: pink
+`
 
 const Users = (props) => {
     const {users, userForm} = props
     return (
-        <div>
+        <CheerfulContainer>
             <h2> Users </h2>
             {userForm()}
             <br />
@@ -34,7 +39,7 @@ const Users = (props) => {
                     )}
                 </tbody>
             </table>
-        </div>
+        </CheerfulContainer>
     )
 }
 export default Users

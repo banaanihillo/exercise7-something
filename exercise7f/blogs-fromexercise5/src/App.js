@@ -17,7 +17,17 @@ import {setLoggedIn} from "./reducers/loginReducer"
 import {Switch, Route, Link, useRouteMatch} from "react-router-dom"
 import Blogs from "./components/Blogs"
 import Users from "./components/Users"
+import styledComponents from "styled-components"
 require("./styles.css")
+
+const BlogListItem = styledComponents.li`
+    background: silver;
+    padding: 3px
+`
+
+const MainPage = styledComponents.div`
+    background: lavender
+`
 
 const App = () => {
     const dispatch = useDispatch()
@@ -163,8 +173,7 @@ const App = () => {
         : null
 
     return (
-        <div>
-            
+        <MainPage>
             {(loggedInUser === null)
                 ? loginForm()
                 : <div>
@@ -187,7 +196,11 @@ const App = () => {
                             <Link to = "/blogs"> Back to list of blogs </Link>
                         </Route>
                         <Route path = "/blogs">
-                            <Blogs blogs = {blogs} blogForm = {blogForm} />
+                            <Blogs
+                                blogs = {blogs}
+                                blogForm = {blogForm}
+                                BlogListItem = {BlogListItem}
+                            />
                         </Route>
 
                         <Route path = "/users/:id">
@@ -212,7 +225,7 @@ const App = () => {
                     </Switch>
                 </div>
             }
-        </div>
+        </MainPage>
     )
 }
 
